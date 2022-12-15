@@ -14,6 +14,7 @@ dirs_to_content: Dict[str, List[DirElement]] = defaultdict(list)
 base_dir = DirElement("dir", "-", "/")
 base_dir.parent = False
 
+
 def is_command(line):
     return True if line[0] == "$" else False
 
@@ -58,6 +59,11 @@ def get_size_of_dir(dir_id):
             total += get_size_of_dir(id(element))
     return total
 
+
+def get_used_space():
+    return get_size_of_dir(id(base_dir))
+
+
 def get_directories_of_max_size(x: int):
     total_of_all = 0
     for dir_id in dirs_to_content.keys():
@@ -65,6 +71,15 @@ def get_directories_of_max_size(x: int):
         if total <= x:
             total_of_all += total
     return total_of_all
+
+
+def get_smallest_directory_above(x):
+    candidates = []
+    for dir_id in dirs_to_content.keys():
+        total = get_size_of_dir(dir_id)
+        if total >= x:
+            candidates.append(total)
+    return sorted(candidates)
 
 
 with open("input.txt") as f:
@@ -79,3 +94,6 @@ with open("input.txt") as f:
             parse_out(line, current_dir)
 
     print(get_directories_of_max_size(100000))
+    space_left = 70000000 - get_used_space()
+    print(get_used_space(),space_left)
+    print(get_smallest_directory_above(30000000 - space_left))
